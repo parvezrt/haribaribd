@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HARI বাড়ি - খাঁটি ও সুস্বাদু ঘরের খাবার</title>
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Hind Siliguri', sans-serif;
+        }
+        body {
+            background-color: #fcf8f2;
+            color: #333;
+            line-height: 1.6;
+        }
+        header {
+            background: linear-gradient(135deg, #d35400, #e67e22);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+        }
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        /* নোটিশ বোর্ড / ডেইলি আপডেট */
+        .daily-update {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .daily-update h3 {
+            color: #856404;
+            margin-bottom: 5px;
+        }
+        /* ফুড মেনু সেকশন */
+        .section-title {
+            text-align: center;
+            margin: 40px 0 20px;
+            color: #d35400;
+            font-size: 2rem;
+        }
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .food-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+        .food-card:hover {
+            transform: translateY(-5px);
+        }
+        .food-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background-color: #ddd;
+        }
+        .food-details {
+            padding: 15px;
+        }
+        .food-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        .food-price {
+            color: #e67e22;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        .add-to-cart-btn {
+            display: block;
+            width: 100%;
+            background: #27ae60;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .add-to-cart-btn:hover {
+            background: #219653;
+        }
+        
+        /* কার্ট ও অর্ডার সেকশন */
+        .order-section {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-top: 40px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border-top: 5px solid #d35400;
+        }
+        .cart-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+        }
+        .cart-table th, .cart-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .cart-table th {
+            background: #fdf2e9;
+            color: #d35400;
+        }
+        .qty-btn {
+            background: #e67e22;
+            color: white;
+            border: none;
+            padding: 2px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .remove-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .remove-btn:hover {
+            background: #c0392b;
+        }
+
+        .order-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+        .form-group label {
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        /* বিল সামারি বক্স */
+        .total-display {
+            grid-column: span 2;
+            background: #e8f8f5;
+            border: 1px dashed #1abc9c;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 1.1rem;
+            color: #16a085;
+            line-height: 1.8;
+        }
+        .total-display span {
+            font-weight: 700;
+        }
+
+        /* বিকাশ গেটওয়ে বাটন স্টাইল */
+        #bkashGatewayBox {
+            grid-column: span 2;
+            background: #fce4ec;
+            border: 1px solid #e91e63;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            display: none;
+        }
+        .bkash-pay-btn {
+            display: inline-block;
+            background: #e2136e;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 8px;
+            transition: background 0.2s;
+        }
+        .bkash-pay-btn:hover {
+            background: #c81060;
+        }
+
+        .submit-btn {
+            grid-column: span 2;
+            background: #d35400;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .submit-btn:hover {
+            background: #b94000;
+        }
+        /* ফুটার */
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 50px;
+        }
+        .social-links a {
+            color: white;
+            font-size: 1.8rem;
+            margin: 0 10px;
+            text-decoration: none;
+        }
+        @media(max-width: 768px) {
+            .order-form {
+                grid-template-columns: 1fr;
+            }
+            .form-group.full-width, .total-display, #bkashGatewayBox, .submit-btn {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- হেডার -->
+    <header>
+        <h1>HARI বাড়ি</h1>
+        <p>খাঁটি ও সুস্বাদু ঘরের খাবার</p>
+    </header>
+
+    <div class="container">
+
+        <!-- ডেইলি আপডেট / নোটিশ বোর্ড -->
+        <div class="daily-update">
+            <h3><i class="fa-solid fa-bullhorn"></i> আজকের বিশেষ ঘোষণা ও ডেলিভারি আপডেট</h3>
+            <p id="dailyNotice">আজ দুপুরের মেনুতে রয়েছে স্পেশাল দেশি মুরগির রোস্ট ও ঝরঝরে বাসমতি পোলাও! অর্ডার নেওয়ার সময় শেষ দুপুর ১২:০০ টায়। হোম ডেলিভারি শুরু হবে দুপুর ১:৩০ থেকে।</p>
+        </div>
+
+        <!-- ফুড মেনু -->
+        <h2 class="section-title">আমাদের সিগনেচার মেনু</h2>
+        <div class="menu-grid">
+            
+            <!-- আইটেম ১ -->
+            <div class="food-card">
+                <img src="kachchi.jpg" alt="Biryani" class="food-img">
+                <div class="food-details">
+                    <div class="food-title">স্পেশাল খাসির কাচ্চি বিরিয়ানি</div>
+                    <div class="food-price">৩৫০ টাকা</div>
+                    <button class="add-to-cart-btn" onclick="addToCart('স্পেশাল খাসির কাচ্চি বিরিয়ানি', 350)"><i class="fa-solid fa-cart-plus"></i> কার্টে যোগ করুন</button>
+                </div>
+            </div>
+
+            <!-- আইটেম ২ -->
+            <div class="food-card">
+                <img src="Chiken.jpg" alt="Chicken Roast" class="food-img">
+                <div class="food-details">
+                    <div class="food-title">দেশি মুরগির রোস্ট ও পোলাও কম্বো</div>
+                    <div class="food-price">২৮০ টাকা</div>
+                    <button class="add-to-cart-btn" onclick="addToCart('দেশি মুরগির রোস্ট ও পোলাও কম্বো', 280)"><i class="fa-solid fa-cart-plus"></i> কার্টে যোগ করুন</button>
+                </div>
+            </div>
+
+            <!-- আইটেম ৩ -->
+            <div class="food-card">
+                <img src="Hilsha.jpg" alt="Fish Curry" class="food-img">
+                <div class="food-details">
+                    <div class="food-title">পদ্মার ইলিশ ও গরম ভাত</div>
+                    <div class="food-price">৪০০ টাকা</div>
+                    <button class="add-to-cart-btn" onclick="addToCart('পদ্মার ইলিশ ও গরম ভাত থালি', 400)"><i class="fa-solid fa-cart-plus"></i> কার্টে যোগ করুন</button>
+                </div>
+            </div>
+
+            <!-- আইটেম ৪ -->
+            <div class="food-card">
+                <img src="mutton.jpeg.jpg" alt="Mutton" class="food-img">
+                <div class="food-details">
+                    <div class="food-title">চুইঝাল খাসির মাংস</div>
+                    <div class="food-price">৩৫৫ টাকা</div>
+                    <button class="add-to-cart-btn" onclick="addToCart('চুইঝাল খাসির মাংস', 355)"><i class="fa-solid fa-cart-plus"></i> কার্টে যোগ করুন</button>
+                </div>
+            </div>
+
+            <!-- আইটেম ৫ -->
+            <div class="food-card">
+                <img src="Beef.jpeg.jpg" alt="Beef" class="food-img">
+                <div class="food-details">
+                    <div class="food-title">চুইঝাল গরুর মাংস</div>
+                    <div class="food-price">২৮০ টাকা</div>
+                    <button class="add-to-cart-btn" onclick="addToCart('চুইঝাল গরুর মাংস', 280)"><i class="fa-solid fa-cart-plus"></i> কার্টে যোগ করুন</button>
+                </div>
+            </div>
+
+            <!-- আইটেম ৬ -->
+            <div class="food-card">
+                <img src="pabda.jpeg.jpg" alt="Fish" class="food-img">
+                <div class="food-details">
+                    <div class="food-title">দেশী পাবদা মাছ</div>
+                    <div class="food-price">১৫৫ টাকা</div>
+                    <button class="add-to-cart-btn" onclick="addToCart('দেশী পাবদা মাছ', 155)"><i class="fa-solid fa-cart-plus"></i> কার্টে যোগ করুন</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- অর্ডার ফর্ম ও কার্ট সেকশন -->
+        <div class="order-section" id="orderForm">
+            <h2 style="text-align: center; margin-bottom: 20px; color: #d35400;"><i class="fa-solid fa-cart-shopping"></i> আপনার সিলেক্ট করা কার্ট তালিকা</h2>
+            
+            <!-- কার্ট টেবিল -->
+            <table class="cart-table">
+                <thead>
+                    <tr>
+                        <th>খাবারের নাম</th>
+                        <th>মূল্য</th>
+                        <th>পরিমাণ</th>
+                        <th>মোট</th>
+                        <th>মুছে ফেলুন</th>
+                    </tr>
+                </thead>
+                <tbody id="cartTableBody">
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: #777;">কার্টে কোনো খাবার নেই। ওপরের মেনু থেকে খাবার যোগ করুন।</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2 style="text-align: center; margin: 30px 0 20px; color: #d35400;">ডেলিভারি ও পেমেন্ট তথ্য</h2>
+            <form class="order-form" onsubmit="handleOrder(event)">
+                <div class="form-group">
+                    <label for="name">আপনার নাম</label>
+                    <input type="text" id="name" placeholder="পূর্ণ নাম লিখুন" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">মোবাইল নাম্বার</label>
+                    <input type="tel" id="phone" placeholder="০১৭xxxxxxxx" required>
+                </div>
+
+                <!-- ডেলিভারি এলাকা -->
+                <div class="form-group">
+                    <label for="deliveryArea">ডেলিভারি এলাকা ও চার্জ</label>
+                    <select id="deliveryArea" onchange="updateTotal()">
+                        <option value="60">শহরের ভেতরে (৬০ টাকা)</option>
+                        <option value="120">শহরের বাইরে (১২০ টাকা)</option>
+                        <option value="0">ফ্রি ডেলিভারি / নিজে এসে নিয়ে যাবো (০ টাকা)</option>
+                    </select>
+                </div>
+
+                <!-- পেমেন্ট পদ্ধতি -->
+                <div class="form-group">
+                    <label for="paymentMethod">পেমেন্ট পদ্ধতি</label>
+                    <select id="paymentMethod" onchange="toggleBkashGateway()">
+                        <option value="COD">ক্যাশ অন ডেলিভারি (Cash on Delivery)</option>
+                        <option value="bKash">বিকাশ (bKash Payment)</option>
+                    </select>
+                </div>
+
+                <!-- বিকাশ পেমেন্ট বক্স -->
+                <div id="bkashGatewayBox">
+                    <p style="color: #c2185b; font-weight: 600; margin-bottom: 8px;">
+                        <i class="fa-solid fa-wallet"></i> বিকাশ পেমেন্ট নির্দেশিকা:
+                    </p>
+                    <p style="font-size: 0.95rem; line-height: 1.5; color: #333; margin-bottom: 10px;">
+                        দয়া করে আপনার বিকাশ অ্যাপ থেকে নিচের নাম্বারে (Send Money / Payment) সর্বমোট টাকা পাঠিয়ে দিন:<br>
+                        <strong style="font-size: 1.1rem; color: #d35400;">বিকাশ নাম্বার: ০১৭১৬২৬৭০৫৮ (পার্সোনাল/মার্চেন্ট)</strong>
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 5px;">
+                        <label for="trxId" style="font-weight: 600; font-size: 0.9rem;">ট্রানজাকশন আইডি (TrxID) অথবা আপনার বিকাশ নাম্বার লিখুন:</label>
+                        <input type="text" id="trxId" placeholder="যেমন: 9N7A8B6C অথবা 018xxxxxxxx" style="padding: 8px; border: 1px solid #e91e63; border-radius: 4px;">
+                    </div>
+                </div>
+                
+                <!-- মোট টাকা প্রদর্শনের বক্স -->
+                <div class="total-display">
+                    খাবারের মোট মূল্য: <span id="foodTotal">০</span> টাকা + ডেলিভারি চার্জ: <span id="deliveryChargeText">৬০</span> টাকা<br>
+                    <strong>সর্বমোট প্রদেয় মূল্য: <span id="totalAmount">৬০</span> টাকা</strong>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="address">ডেলিভারি ঠিকানা</label>
+                    <textarea id="address" rows="3" placeholder="বাসা নং, রোড, এলাকা..." required></textarea>
+                </div>
+                <button type="submit" class="submit-btn"><i class="fa-brands fa-whatsapp"></i> অর্ডার কনফার্ম করুন (WhatsApp)</button>
+            </form>
+        </div>
+
+    </div>
+
+    <!-- ফুটার -->
+    <footer>
+        <p>&copy; ২০২৬ HARI বাড়ি। সর্বস্বত্ব সংরক্ষিত।</p>
+        <p style="margin: 10px 0; font-size: 0.9rem;">যোগাযোগ: +৮৮০১৭১৬২৬৭০৫৮</p>
+        <div class="social-links" style="margin-top: 15px;">
+            <a href="https://www.facebook.com/share/19oVn2MQTn/?mibextid=wwXIfr" target="_blank" title="ফেসবুক পেজ"><i class="fa-brands fa-square-facebook"></i></a>
+            <a href="https://wa.me/8801716267058?text=হ্যালো,%20HARI%20বাড়ি%20থেকে%20খাবার%20সম্পর্কে জানতে চাই।" target="_blank" title="হোয়াটসঅ্যাপে কথা বলুন"><i class="fa-brands fa-whatsapp"></i></a>
+        </div>
+    </footer>
+
+    <!-- জাভাস্ক্রিপ্ট লজিক -->
+    <script>
+        let cart = [];
+
+        function addToCart(name, price) {
+            let existingItem = cart.find(item => item.name === name);
+            if (existingItem) {
+                existingItem.qty += 1;
+            } else {
+                cart.push({ name: name, price: price, qty: 1 });
+            }
+            renderCart();
+            document.getElementById('orderForm').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function changeQty(index, amount) {
+            cart[index].qty += amount;
+            if (cart[index].qty <= 0) {
+                cart.splice(index, 1);
+            }
+            renderCart();
+        }
+
+        function removeItem(index) {
+            cart.splice(index, 1);
+            renderCart();
+        }
+
+        function renderCart() {
+            const tbody = document.getElementById('cartTableBody');
+            tbody.innerHTML = '';
+
+            if (cart.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #777;">কার্টে কোনো খাবার নেই। ওপরের মেনু থেকে খাবার যোগ করুন।</td></tr>`;
+                document.getElementById('foodTotal').innerText = '০';
+                updateTotal();
+                return;
+            }
+
+            let foodTotal = 0;
+            cart.forEach((item, index) => {
+                let itemTotal = item.price * item.qty;
+                foodTotal += itemTotal;
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>৳${item.price}</td>
+                        <td>
+                            <button type="button" class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
+                            <span style="margin: 0 8px; font-weight: bold;">${item.qty}</span>
+                            <button type="button" class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
+                        </td>
+                        <td>৳${itemTotal}</td>
+                        <td><button type="button" class="remove-btn" onclick="removeItem(${index})"><i class="fa-solid fa-trash"></i></button></td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('foodTotal').innerText = foodTotal;
+            updateTotal();
+        }
+
+        function updateTotal() {
+            let foodTotal = parseInt(document.getElementById('foodTotal').innerText) || 0;
+            let deliveryFee = parseInt(document.getElementById('deliveryArea').value) || 0;
+            let grandTotal = foodTotal + deliveryFee;
+            
+            document.getElementById('deliveryChargeText').innerText = deliveryFee;
+            document.getElementById('totalAmount').innerText = grandTotal;
+        }
+
+        function toggleBkashGateway() {
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            const gatewayBox = document.getElementById('bkashGatewayBox');
+            
+            if (paymentMethod === 'bKash') {
+                gatewayBox.style.display = 'block';
+            } else {
+                gatewayBox.style.display = 'none';
+            }
+        }
+
+        window.onload = function() {
+            renderCart();
+        };
+
+        // কাস্টমার অর্ডার করার পর সরাসরি WhatsApp এ অর্ডার পাঠানোর লজিক
+        function handleOrder(event) {
+            event.preventDefault();
+            if (cart.length === 0) {
+                alert('দয়া করে কার্টে অন্তত একটি খাবার যোগ করুন!');
+                return;
+            }
+
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const address = document.getElementById('address').value;
+            const payment = document.getElementById('paymentMethod').value;
+            const trxId = document.getElementById('trxId').value || 'প্রযোজ্য নয় (COD)';
+            const foodTotal = document.getElementById('foodTotal').innerText;
+            const deliveryFee = document.getElementById('deliveryChargeText').innerText;
+            const grandTotal = document.getElementById('totalAmount').innerText;
+
+            // খাবারের তালিকা তৈরি করা
+            let itemsText = '';
+            cart.forEach((item, index) => {
+                itemsText += `${index + 1}. ${item.name} - ${item.qty} পিস (৳${item.price * item.qty})\n`;
+            });
+
+            // আপনার WhatsApp নাম্বার (যেখানে অর্ডারগুলো মেসেজ হিসেবে আসবে)
+            const myWhatsAppNumber = '8801716267058'; 
+
+            // WhatsApp মেসেজ ফরম্যাট
+            let message = `*নতুন অর্ডার এসেছে - HARI বাড়ি*\n\n` +
+                          `👤 *গ্রাহকের নাম:* ${name}\n` +
+                          `📞 *ফোন নাম্বার:* ${phone}\n` +
+                          `📍 *ঠিকানা:* ${address}\n\n` +
+                          `🛒 *অর্ডারের তালিকা:*\n${itemsText}\n` +
+                          `🍽️ খাবারের দাম: ৳${foodTotal}\n` +
+                          `🚚 ডেলিভারি চার্জ: ৳${deliveryFee}\n` +
+                          `💰 *সর্বমোট বিল:* ৳${grandTotal}\n` +
+                          `💳 *পেমেন্ট পদ্ধতি:* ${payment === 'bKash' ? 'বিকাশ' : 'ক্যাশ অন ডেলিভারি'}\n` +
+                          `📝 *TrxID/Account:* ${trxId}`;
+
+            // URL এনকোড করে WhatsApp লিংক তৈরি
+            let encodedMessage = encodeURIComponent(message);
+            let whatsappURL = `https://wa.me/${myWhatsAppNumber}?text=${encodedMessage}`;
+
+            // নতুন ট্যাবে WhatsApp ওপেন করা
+            window.open(whatsappURL, '_blank');
+
+            alert(`ধন্যবাদ ${name}! আপনার অর্ডারটি WhatsApp-এ ফরোয়ার্ড করা হয়েছে।`);
+            
+            // ফর্ম ও কার্ট রিসেট করা
+            cart = [];
+            renderCart();
+            event.target.reset();
+            toggleBkashGateway();
+        }
+    </script>
+
+</body>
+</html>
